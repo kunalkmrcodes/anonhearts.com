@@ -49,7 +49,7 @@ const icebreakers = [
             id="play-basketball-btn"
             type="button"
             class="px-3.5 py-2 rounded-full border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-amber-500/10 active:scale-95 cursor-pointer"
-            title="Play Basketball Shootout with match"
+            title="Play Level-Based Basketball Shootout"
           >
             <span class="text-base">🏀</span>
             <span class="hidden sm:inline">Play Shootout</span>
@@ -103,7 +103,7 @@ const icebreakers = [
           </div>
           <div class="space-y-1">
             <div class="bg-zinc-900 border border-zinc-800 p-3.5 rounded-2xl rounded-bl-sm text-zinc-200 shadow-md">
-              Hey there! 👋 Up for a quick basketball shootout game? Hit the 🏀 Play Shootout button at the top to challenge me!
+              Hey there! 👋 Challenge me in the Basketball Shootout! Click 🏀 Play Shootout to beat Level 1 to 5!
             </div>
             <div class="text-[10px] text-zinc-500 px-1">10:42 PM</div>
           </div>
@@ -113,7 +113,7 @@ const icebreakers = [
         <div class="flex items-end justify-end gap-2.5 max-w-[85%] sm:max-w-[70%] ml-auto">
           <div class="space-y-1 text-right">
             <div class="bg-gradient-to-r from-pink-600 to-rose-600 text-white p-3.5 rounded-2xl rounded-br-sm shadow-md shadow-pink-600/10">
-              Sounds awesome! Let's see who gets the highest swish score 🏀
+              Challenge accepted! Let's see who reaches Level 5 Legend status 🏀
             </div>
             <div class="text-[10px] text-zinc-500 px-1">10:44 PM • Sent</div>
           </div>
@@ -162,39 +162,7 @@ const icebreakers = [
 
     </div>
 
-    <!-- REVEAL PHOTO CONFIRMATION MODAL -->
-    <div id="reveal-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl">
-      <div class="w-full max-w-md rounded-3xl border border-pink-500/40 bg-zinc-950 p-8 text-center space-y-6 shadow-2xl">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-pink-500/20 border border-pink-500/40 text-3xl">
-          🔓
-        </div>
-        <div class="space-y-2">
-          <h3 class="text-2xl font-bold text-white">Mutual Unmask Request</h3>
-          <p class="text-xs text-zinc-400">
-            You are sending a request to <span class="text-pink-400 font-bold">VelvetEcho</span> to mutually reveal real profile photos.
-          </p>
-        </div>
-
-        <div class="space-y-3 pt-2">
-          <button
-            id="confirm-reveal-btn"
-            type="button"
-            class="w-full py-3.5 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 text-white font-bold text-sm shadow-lg shadow-pink-500/30"
-          >
-            Send Unmask Request ❤️
-          </button>
-          <button
-            id="cancel-reveal-btn"
-            type="button"
-            class="w-full py-2.5 text-xs text-zinc-500 hover:text-zinc-300"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- BASKETBALL MINI-GAME MODAL -->
+    <!-- LEVEL-BASED BASKETBALL MINI-GAME MODAL -->
     <div id="basketball-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/90 backdrop-blur-2xl">
       <div class="relative w-full max-w-lg rounded-3xl border border-amber-500/40 bg-zinc-950 p-5 sm:p-6 text-center space-y-4 shadow-2xl shadow-amber-500/10 overflow-hidden">
         
@@ -207,60 +175,89 @@ const icebreakers = [
           ✖
         </button>
 
-        <!-- Header Scoreboard -->
-        <div class="space-y-1">
+        <!-- Header Scoreboard & Level Pills -->
+        <div class="space-y-2">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold">
-            🏀 Match Shootout Challenge
+            🏆 Basketball Shootout • Level Progression
           </div>
-          <h3 class="text-xl sm:text-2xl font-extrabold text-white">Score Baskets to Unlock Clues!</h3>
-          <p class="text-xs text-zinc-400">Aim the ball and swipe/click to shoot! Each basket +5% Reveal Gauge.</p>
+
+          <!-- Level Selector Pills -->
+          <div class="flex items-center justify-center gap-1.5 pt-1">
+            {[1, 2, 3, 4, 5].map((lvl) => (
+              <button
+                type="button"
+                class={`level-pill-btn px-3 py-1 rounded-full text-xs font-extrabold transition cursor-pointer ${
+                  lvl === 1
+                    ? "bg-amber-500 text-black shadow-md shadow-amber-500/30"
+                    : "bg-zinc-900 text-zinc-500 border border-zinc-800 hover:border-zinc-700"
+                }`}
+                data-level={lvl}
+              >
+                Lvl {lvl}
+              </button>
+            ))}
+          </div>
+
+          <!-- Active Level Banner Description -->
+          <div id="level-desc-banner" class="text-xs font-semibold text-amber-300 bg-amber-950/40 py-1.5 px-3 rounded-xl border border-amber-500/20">
+            🔥 Level 1: Rookie Court (Fixed Rim • Target Score: 3)
+          </div>
         </div>
 
-        <!-- Score & Streak Bar -->
+        <!-- Score, Streak & Timer Bar -->
         <div class="flex items-center justify-between px-4 py-2 bg-zinc-900/80 rounded-2xl border border-zinc-800 text-xs font-bold text-zinc-200">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5">
             <span class="text-amber-400">Score:</span>
-            <span id="game-score" class="text-lg text-white font-extrabold">0</span>
+            <span id="game-score" class="text-base text-white font-extrabold">0</span>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="text-pink-400">Swish Streak:</span>
-            <span id="game-streak" class="text-lg text-white font-extrabold">0</span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-pink-400">Streak:</span>
+            <span id="game-streak" class="text-base text-white font-extrabold">0</span>
           </div>
-          <div class="flex items-center gap-1.5 text-emerald-400">
-            <span>Attempts:</span>
-            <span id="game-attempts" class="font-extrabold">0/5</span>
+          <div class="flex items-center gap-1 text-emerald-400">
+            <span>Baskets:</span>
+            <span id="game-baskets" class="font-extrabold text-white">0/3</span>
+          </div>
+          <div id="timer-box" class="hidden flex items-center gap-1 text-rose-400">
+            <span>⏱️</span>
+            <span id="timer-val" class="font-extrabold">15s</span>
           </div>
         </div>
 
-        <!-- Basketball Court Canvas Area -->
-        <div class="relative w-full h-[320px] rounded-2xl border border-zinc-800 bg-gradient-to-b from-indigo-950/60 via-zinc-950 to-amber-950/40 overflow-hidden flex flex-col justify-between p-4">
+        <!-- Basketball Court Area -->
+        <div class="relative w-full h-[310px] rounded-2xl border border-zinc-800 bg-gradient-to-b from-indigo-950/60 via-zinc-950 to-amber-950/40 overflow-hidden flex flex-col justify-between p-4">
           
-          <!-- Moving Backboard & Hoop -->
+          <!-- Moving Backboard & Hoop Container -->
           <div id="hoop-container" class="relative w-full h-24 flex items-center justify-center transition-all duration-300">
-            <div class="relative flex flex-col items-center">
+            <div id="hoop-assembly" class="relative flex flex-col items-center transition-all duration-300">
               <!-- Backboard -->
-              <div class="w-24 h-16 rounded-xl border-4 border-white/80 bg-white/10 backdrop-blur-md flex items-center justify-center shadow-lg">
+              <div id="backboard" class="w-24 h-16 rounded-xl border-4 border-white/80 bg-white/10 backdrop-blur-md flex items-center justify-center shadow-lg transition-all duration-300">
                 <div class="w-10 h-8 border-2 border-red-500/80 bg-red-500/10"></div>
               </div>
               <!-- Rim & Net -->
               <div class="relative -mt-1 flex flex-col items-center">
-                <div class="w-12 h-3.5 rounded-full border-4 border-amber-500 bg-amber-500/20 shadow-lg shadow-amber-500/50"></div>
+                <div id="rim" class="w-12 h-3.5 rounded-full border-4 border-amber-500 bg-amber-500/20 shadow-lg shadow-amber-500/50 transition-all duration-300"></div>
                 <div class="w-9 h-7 border-x border-b border-dashed border-white/60 rounded-b-xl -mt-1 bg-white/5"></div>
               </div>
             </div>
           </div>
 
-          <!-- Swish Flash Alert -->
-          <div id="swish-alert" class="hidden absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 font-extrabold text-3xl text-amber-400 animate-bounce drop-shadow-[0_0_15px_rgba(245,158,11,0.8)] z-30">
-            🔥 SWISH! +5% REVEAL
+          <!-- Wind / Wave Indicator Banner -->
+          <div id="wind-indicator" class="hidden absolute top-2 right-4 text-[11px] font-bold text-cyan-300 bg-cyan-950/60 px-2.5 py-1 rounded-full border border-cyan-500/30">
+            💨 Wind: 8 mph Left
           </div>
 
-          <!-- Ball Area -->
+          <!-- Swish Alert Overlay -->
+          <div id="swish-alert" class="hidden absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 font-extrabold text-3xl text-amber-400 animate-bounce drop-shadow-[0_0_15px_rgba(245,158,11,0.8)] z-30">
+            🔥 SWISH!
+          </div>
+
+          <!-- Ball & Aiming Zone -->
           <div class="relative h-28 flex flex-col items-center justify-end">
-            <!-- Shoot Aim Indicator -->
-            <div id="aim-line" class="w-1 bg-gradient-to-t from-amber-500 to-transparent h-16 mb-2 rounded-full animate-pulse opacity-60"></div>
+            <!-- Aim Trajectory Line -->
+            <div id="aim-line" class="w-1 bg-gradient-to-t from-amber-500 to-transparent h-16 mb-2 rounded-full opacity-70 transition-all duration-200"></div>
             
-            <!-- Interactive Basketball -->
+            <!-- Basketball Element -->
             <div
               id="basketball"
               class="w-14 h-14 rounded-full bg-gradient-to-tr from-amber-600 via-orange-500 to-amber-400 flex items-center justify-center text-2xl shadow-xl shadow-amber-500/30 border-2 border-amber-300 cursor-pointer transform hover:scale-110 active:scale-95 transition-all duration-100 z-20 select-none"
@@ -271,22 +268,22 @@ const icebreakers = [
 
         </div>
 
-        <!-- Action Controls -->
+        <!-- Controls Toolbar -->
         <div class="flex items-center justify-between gap-3 pt-1">
           <button
             id="shoot-btn"
             type="button"
-            class="flex-1 py-3.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-extrabold text-sm shadow-xl shadow-amber-500/25 transition hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+            class="flex-1 py-3.5 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-white font-extrabold text-sm shadow-xl shadow-amber-500/25 transition hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
           >
-            🏀 SHOOT BASKETBALL!
+            🏀 SHOOT (CLICK OR SWIPE)
           </button>
           
           <button
             id="share-score-btn"
             type="button"
-            class="px-5 py-3.5 rounded-full border border-pink-500/40 bg-pink-500/10 hover:bg-pink-500/20 text-pink-300 font-bold text-xs transition cursor-pointer"
+            class="px-4 py-3.5 rounded-full border border-pink-500/40 bg-pink-500/10 hover:bg-pink-500/20 text-pink-300 font-bold text-xs transition cursor-pointer"
           >
-            Send Score to Chat 💬
+            Post to Chat 💬
           </button>
         </div>
 
@@ -311,12 +308,8 @@ const icebreakers = [
     if (chatNickname) chatNickname.textContent = activeMatch.nickname;
     if (chatAvatar) chatAvatar.textContent = activeMatch.avatar;
 
-    // Chat form submit
-    const chatForm = document.getElementById("chat-form") as HTMLFormElement;
-    const messageInput = document.getElementById("message-input") as HTMLInputElement;
+    // Chat feed message helper
     const chatFeed = document.getElementById("chat-feed");
-    const typingIndicator = document.getElementById("typing-indicator");
-
     function appendMessage(sender: "user" | "match" | "system", text: string) {
       if (!chatFeed) return;
       const wrap = document.createElement("div");
@@ -357,6 +350,11 @@ const icebreakers = [
       chatFeed.scrollTop = chatFeed.scrollHeight;
     }
 
+    // Chat form submit
+    const chatForm = document.getElementById("chat-form") as HTMLFormElement;
+    const messageInput = document.getElementById("message-input") as HTMLInputElement;
+    const typingIndicator = document.getElementById("typing-indicator");
+
     chatForm?.addEventListener("submit", (e) => {
       e.preventDefault();
       const text = messageInput.value.trim();
@@ -365,23 +363,35 @@ const icebreakers = [
       appendMessage("user", text);
       messageInput.value = "";
 
-      setTimeout(() => {
-        typingIndicator?.classList.remove("hidden");
-        if (chatFeed) chatFeed.scrollTop = chatFeed.scrollHeight;
-      }, 500);
-
+      setTimeout(() => typingIndicator?.classList.remove("hidden"), 500);
       setTimeout(() => {
         typingIndicator?.classList.add("hidden");
         const replies = [
-          "Haha nice shot! Love your energy 🔥",
-          "You're awesome at this game!",
-          "Let's play another round of Shootout later 🏀"
+          "Nice shot! Let's conquer Level 5 together 🏀",
+          "You're a basketball legend!",
+          "Swish! Keep aiming high 🔥"
         ];
         appendMessage("match", replies[Math.floor(Math.random() * replies.length)]);
-      }, 2000);
+      }, 1800);
     });
 
-    // BASKETBALL MINI-GAME LOGIC
+    // LEVEL-BASED GAME ENGINE LOGIC
+    let currentLevel = 1;
+    let score = 0;
+    let streak = 0;
+    let levelBaskets = 0;
+    let isShooting = false;
+    let timerInterval: any = null;
+    let timeLeft = 15;
+
+    const levelConfigs: Record<number, { title: string; target: number; accuracy: number; speed: number; wind: boolean; timer: boolean }> = {
+      1: { title: "Level 1: Rookie Court (Fixed Rim • Target: 3)", target: 3, accuracy: 0.85, speed: 0, wind: false, timer: false },
+      2: { title: "Level 2: Moving Rim (Horizontal Motion • Target: 3)", target: 3, accuracy: 0.70, speed: 1.5, wind: false, timer: false },
+      3: { title: "Level 3: Crosswind Challenge (Wind Drift • Target: 4)", target: 4, accuracy: 0.55, speed: 2.5, wind: true, timer: false },
+      4: { title: "Level 4: Sinusoidal Orbit (3D Motion • Target: 4)", target: 4, accuracy: 0.45, speed: 3.5, wind: true, timer: false },
+      5: { title: "Level 5: Buzzer Beater Legend (15s Countdown! • Target: 5)", target: 5, accuracy: 0.35, speed: 4.5, wind: true, timer: true }
+    };
+
     const basketModal = document.getElementById("basketball-modal");
     const playBasketBtn = document.getElementById("play-basketball-btn");
     const barBasketBtn = document.getElementById("bar-basketball-btn");
@@ -390,54 +400,114 @@ const icebreakers = [
     const basketball = document.getElementById("basketball");
     const swishAlert = document.getElementById("swish-alert");
     const shareScoreBtn = document.getElementById("share-score-btn");
+    const levelDescBanner = document.getElementById("level-desc-banner");
+    const windIndicator = document.getElementById("wind-indicator");
 
     const gameScoreEl = document.getElementById("game-score");
     const gameStreakEl = document.getElementById("game-streak");
-    const gameAttemptsEl = document.getElementById("game-attempts");
+    const gameBasketsEl = document.getElementById("game-baskets");
+    const timerBox = document.getElementById("timer-box");
+    const timerVal = document.getElementById("timer-val");
 
-    let score = 0;
-    let streak = 0;
-    let attempts = 0;
-    let isShooting = false;
+    const hoopAssembly = document.getElementById("hoop-assembly");
+    const levelPillBtns = document.querySelectorAll(".level-pill-btn");
 
-    function openGame() {
-      basketModal?.classList.remove("hidden");
+    function setLevel(lvl: number) {
+      currentLevel = lvl;
+      levelBaskets = 0;
+      const config = levelConfigs[lvl];
+
+      if (levelDescBanner) levelDescBanner.textContent = config.title;
+      if (gameBasketsEl) gameBasketsEl.textContent = `0/${config.target}`;
+
+      levelPillBtns.forEach((btn) => {
+        const l = Number((btn as HTMLElement).dataset.level);
+        if (l === lvl) {
+          btn.className = "level-pill-btn px-3 py-1 rounded-full text-xs font-extrabold bg-amber-500 text-black shadow-md shadow-amber-500/30 cursor-pointer";
+        } else {
+          btn.className = "level-pill-btn px-3 py-1 rounded-full text-xs font-extrabold bg-zinc-900 text-zinc-400 border border-zinc-800 cursor-pointer hover:border-zinc-700";
+        }
+      });
+
+      // Wind indicator
+      if (config.wind && windIndicator) {
+        windIndicator.classList.remove("hidden");
+        windIndicator.textContent = `💨 Wind: ${Math.floor(Math.random() * 10 + 5)} mph Left`;
+      } else {
+        windIndicator?.classList.add("hidden");
+      }
+
+      // Timer box
+      if (config.timer && timerBox) {
+        timerBox.classList.remove("hidden");
+        startTimer();
+      } else {
+        timerBox?.classList.add("hidden");
+        clearInterval(timerInterval);
+      }
+
+      // Reset animation on hoop
+      if (hoopAssembly) {
+        hoopAssembly.style.animation = config.speed > 0 ? `slideHoop ${4 / config.speed}s ease-in-out infinite alternate` : "none";
+      }
     }
-    function closeGame() {
-      basketModal?.classList.add("hidden");
-    }
 
-    playBasketBtn?.addEventListener("click", openGame);
-    barBasketBtn?.addEventListener("click", openGame);
-    closeBasketBtn?.addEventListener("click", closeGame);
+    function startTimer() {
+      clearInterval(timerInterval);
+      timeLeft = 15;
+      if (timerVal) timerVal.textContent = `${timeLeft}s`;
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        if (timerVal) timerVal.textContent = `${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          alert("⏱️ Time's Up on Level 5! Try again!");
+          setLevel(5);
+        }
+      }, 1000);
+    }
 
     function shootBall() {
       if (isShooting || !basketball) return;
       isShooting = true;
-      attempts++;
 
-      // Animate ball shooting up towards hoop
+      const config = levelConfigs[currentLevel];
       basketball.style.transform = "translateY(-200px) scale(0.6)";
 
-      // Random swish chance (75% success)
-      const isSuccess = Math.random() > 0.25;
+      const isSuccess = Math.random() < config.accuracy;
 
       setTimeout(() => {
         if (isSuccess) {
-          score++;
+          score += (currentLevel * 10);
           streak++;
+          levelBaskets++;
+
           if (swishAlert) {
+            swishAlert.textContent = `🔥 Lvl ${currentLevel} SWISH! +${currentLevel * 5}% REVEAL`;
             swishAlert.classList.remove("hidden");
-            setTimeout(() => swishAlert.classList.add("hidden"), 1000);
+            setTimeout(() => swishAlert.classList.add("hidden"), 900);
+          }
+
+          // Check Level Completion
+          if (levelBaskets >= config.target) {
+            setTimeout(() => {
+              if (currentLevel < 5) {
+                alert(`🏆 LEVEL ${currentLevel} CONQUERED! Unlocking Level ${currentLevel + 1}! 🎉`);
+                setLevel(currentLevel + 1);
+              } else {
+                alert("🏆 ALL 5 BASKETBALL LEVELS CONQUERED! LEGEND STATUS UNLOCKED! 🔥");
+              }
+            }, 300);
           }
         } else {
           streak = 0;
-          basketball.style.transform = "translateY(-150px) translateX(40px) scale(0.5)";
+          basketball.style.transform = "translateY(-150px) translateX(45px) scale(0.5)";
         }
 
         if (gameScoreEl) gameScoreEl.textContent = String(score);
         if (gameStreakEl) gameStreakEl.textContent = String(streak);
-        if (gameAttemptsEl) gameAttemptsEl.textContent = `${attempts}/5`;
+        if (gameBasketsEl) gameBasketsEl.textContent = `${levelBaskets}/${config.target}`;
 
         setTimeout(() => {
           basketball.style.transform = "translateY(0) scale(1)";
@@ -447,19 +517,41 @@ const icebreakers = [
       }, 400);
     }
 
+    // Event listeners
+    levelPillBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const lvl = Number((btn as HTMLElement).dataset.level);
+        if (lvl) setLevel(lvl);
+      });
+    });
+
+    playBasketBtn?.addEventListener("click", () => {
+      basketModal?.classList.remove("hidden");
+      setLevel(1);
+    });
+    barBasketBtn?.addEventListener("click", () => {
+      basketModal?.classList.remove("hidden");
+      setLevel(1);
+    });
+    closeBasketBtn?.addEventListener("click", () => {
+      basketModal?.classList.add("hidden");
+      clearInterval(timerInterval);
+    });
+
     shootBtn?.addEventListener("click", shootBall);
     basketball?.addEventListener("click", shootBall);
 
     shareScoreBtn?.addEventListener("click", () => {
-      closeGame();
-      const scoreMsg = `🏀 Challenge Results: Scored ${score} Baskets out of ${attempts} shots! (Swish Streak: ${streak}) 🎉`;
+      basketModal?.classList.add("hidden");
+      clearInterval(timerInterval);
+      const scoreMsg = `🏀 Level ${currentLevel} Shootout Victory: Scored ${levelBaskets} Baskets (Total Points: ${score} pts) 🔥`;
       appendMessage("system", scoreMsg);
       setTimeout(() => {
-        appendMessage("match", `Whoa! ${score} baskets?! You've got skills 🏀 Next round is on me!`);
+        appendMessage("match", `Incredible score on Level ${currentLevel}! Let's play Level ${Math.min(5, currentLevel + 1)} next! 🏆`);
       }, 1200);
     });
 
-    // Icebreaker prompts
+    // Icebreaker click
     document.querySelectorAll(".icebreaker-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
         const text = (btn as HTMLElement).dataset.text;
@@ -469,18 +561,12 @@ const icebreakers = [
         }
       });
     });
-
-    // Reveal modal handlers
-    const revealReqBtn = document.getElementById("reveal-request-btn");
-    const revealModal = document.getElementById("reveal-modal");
-    const confirmRevealBtn = document.getElementById("confirm-reveal-btn");
-    const cancelRevealBtn = document.getElementById("cancel-reveal-btn");
-
-    revealReqBtn?.addEventListener("click", () => revealModal?.classList.remove("hidden"));
-    cancelRevealBtn?.addEventListener("click", () => revealModal?.classList.add("hidden"));
-    confirmRevealBtn?.addEventListener("click", () => {
-      alert("Unmask Request sent! Once accepted, profile photos unlock!");
-      revealModal?.classList.add("hidden");
-    });
   </script>
 </Layout>
+
+<style>
+  @keyframes slideHoop {
+    0% { transform: translateX(-90px); }
+    100% { transform: translateX(90px); }
+  }
+</style>
