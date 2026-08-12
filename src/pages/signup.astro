@@ -1,0 +1,393 @@
+---
+import "../styles/global.css";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Sign Up — AnonHearts</title>
+  </head>
+
+  <body class="min-h-screen bg-black text-white">
+
+    <main class="mx-auto flex min-h-screen max-w-xl flex-col justify-center px-6 py-12">
+
+      <!-- Logo -->
+      <div class="mb-8 text-center">
+
+        <a href="/" class="inline-flex items-center gap-2">
+          <span class="text-4xl">❤️</span>
+
+          <span class="text-3xl font-bold">
+            AnonHearts
+          </span>
+        </a>
+
+        <p class="mt-4 text-zinc-400">
+          Create your anonymous dating profile
+        </p>
+
+      </div>
+
+
+      <!-- Signup Form -->
+      <form
+        id="signup-form"
+        class="rounded-3xl border border-zinc-800 bg-zinc-900/70 p-8 shadow-2xl"
+      >
+
+        <h1 class="text-center text-2xl font-bold">
+          Create account
+        </h1>
+
+        <p class="mt-2 text-center text-zinc-400">
+          Start meeting new people privately
+        </p>
+
+
+        <!-- Nickname -->
+        <div class="mt-7">
+
+          <label
+            for="nickname"
+            class="text-sm text-zinc-400"
+          >
+            Anonymous nickname
+          </label>
+
+          <input
+            id="nickname"
+            name="nickname"
+            type="text"
+            placeholder="MysteryHeart"
+            required
+            maxlength="30"
+            class="mt-2 w-full rounded-xl border border-zinc-700 bg-black px-4 py-3 outline-none transition focus:border-pink-500"
+          />
+
+        </div>
+
+
+        <!-- Email -->
+        <div class="mt-5">
+
+          <label
+            for="email"
+            class="text-sm text-zinc-400"
+          >
+            Email address
+          </label>
+
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            required
+            class="mt-2 w-full rounded-xl border border-zinc-700 bg-black px-4 py-3 outline-none transition focus:border-pink-500"
+          />
+
+        </div>
+
+
+        <!-- Password -->
+        <div class="mt-5">
+
+          <label
+            for="password"
+            class="text-sm text-zinc-400"
+          >
+            Password
+          </label>
+
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="••••••••"
+            minlength="6"
+            required
+            class="mt-2 w-full rounded-xl border border-zinc-700 bg-black px-4 py-3 outline-none transition focus:border-pink-500"
+          />
+
+          <p class="mt-2 text-xs text-zinc-500">
+            Use at least 6 characters.
+          </p>
+
+        </div>
+
+
+        <!-- Age -->
+        <div class="mt-5">
+
+          <label
+            for="age"
+            class="text-sm text-zinc-400"
+          >
+            Age
+          </label>
+
+          <input
+            id="age"
+            name="age"
+            type="number"
+            min="18"
+            max="100"
+            placeholder="18+"
+            required
+            class="mt-2 w-full rounded-xl border border-zinc-700 bg-black px-4 py-3 outline-none transition focus:border-pink-500"
+          />
+
+          <p class="mt-2 text-xs text-zinc-500">
+            You must be 18 or older to use AnonHearts.
+          </p>
+
+        </div>
+
+
+        <!-- Interests -->
+        <div class="mt-6">
+
+          <label class="text-sm text-zinc-400">
+            Choose your interests
+          </label>
+
+          <div class="mt-3 flex flex-wrap gap-2">
+
+            {[
+              "🎮 Gaming",
+              "🎵 Music",
+              "📚 Books",
+              "🏋️ Fitness",
+              "✈️ Travel",
+              "🎬 Movies"
+            ].map((interest) => (
+
+              <button
+                type="button"
+                class="interest-btn rounded-full border border-zinc-700 px-4 py-2 text-sm transition hover:border-pink-500 hover:text-pink-400"
+                data-interest={interest}
+              >
+                {interest}
+              </button>
+
+            ))}
+
+          </div>
+
+        </div>
+
+
+        <!-- Error Message -->
+        <p
+          id="error-message"
+          class="mt-5 hidden rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400"
+        ></p>
+
+
+        <!-- Submit -->
+        <button
+          id="submit-button"
+          type="submit"
+          class="mt-8 w-full rounded-full bg-pink-600 py-3 font-semibold transition hover:bg-pink-500 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Create Profile ❤️
+        </button>
+
+
+        <!-- Login -->
+        <p class="mt-6 text-center text-sm text-zinc-500">
+
+          Already have an account?
+
+          <a
+            href="/login"
+            class="text-pink-500 transition hover:text-pink-400"
+          >
+            Login
+          </a>
+
+        </p>
+
+      </form>
+
+
+      <!-- Privacy -->
+      <p class="mt-6 text-center text-xs text-zinc-600">
+        🔒 Your profile stays private until you choose to reveal yourself.
+      </p>
+
+    </main>
+
+
+    <!-- Supabase -->
+    <script>
+      import { supabase } from "../lib/supabase";
+
+      const form = document.querySelector("#signup-form");
+      const submitButton = document.querySelector("#submit-button");
+      const errorMessage = document.querySelector("#error-message");
+
+      const interestButtons =
+        document.querySelectorAll(".interest-btn");
+
+      const selectedInterests = new Set();
+
+      interestButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+
+          const interest = button.dataset.interest;
+
+          if (!interest) return;
+
+          if (selectedInterests.has(interest)) {
+
+            selectedInterests.delete(interest);
+
+            button.classList.remove(
+              "border-pink-500",
+              "bg-pink-500/10",
+              "text-pink-400"
+            );
+
+          } else {
+
+            selectedInterests.add(interest);
+
+            button.classList.add(
+              "border-pink-500",
+              "bg-pink-500/10",
+              "text-pink-400"
+            );
+
+          }
+
+        });
+      });
+
+
+      form?.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        if (!submitButton || !errorMessage) return;
+
+
+        errorMessage.classList.add("hidden");
+        errorMessage.textContent = "";
+
+
+        const nicknameInput =
+          document.querySelector("#nickname");
+
+        const emailInput =
+          document.querySelector("#email");
+
+        const passwordInput =
+          document.querySelector("#password");
+
+        const ageInput =
+          document.querySelector("#age");
+
+
+        const nickname =
+          nicknameInput?.value.trim() || "";
+
+        const email =
+          emailInput?.value.trim() || "";
+
+        const password =
+          passwordInput?.value || "";
+
+        const age =
+          Number(ageInput?.value);
+
+
+        if (!nickname || !email || !password || !age) {
+
+          errorMessage.textContent =
+            "Please fill in all required fields.";
+
+          errorMessage.classList.remove("hidden");
+
+          return;
+        }
+
+
+        if (age < 18) {
+
+          errorMessage.textContent =
+            "You must be 18 or older to use AnonHearts.";
+
+          errorMessage.classList.remove("hidden");
+
+          return;
+        }
+
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Creating account...";
+
+
+        try {
+
+          const { data, error } =
+            await supabase.auth.signUp({
+
+              email,
+              password,
+
+              options: {
+                data: {
+                  nickname,
+                  age,
+                  interests: Array.from(selectedInterests)
+                }
+              }
+
+            });
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          if (!data.user) {
+            throw new Error(
+              "Account could not be created. Please try again."
+            );
+          }
+
+
+          alert(
+            "Account created successfully! Please check your email if email confirmation is enabled."
+          );
+
+
+          window.location.href = "/profile";
+
+
+        } catch (error) {
+
+          console.error(error);
+
+          errorMessage.textContent =
+            error instanceof Error
+              ? error.message
+              : "Something went wrong. Please try again.";
+
+          errorMessage.classList.remove("hidden");
+
+
+          submitButton.disabled = false;
+          submitButton.textContent = "Create Profile ❤️";
+
+        }
+
+      });
+    </script>
+
+  </body>
+</html>

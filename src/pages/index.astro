@@ -1,11 +1,207 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const features = [
+  {
+    icon: "🔒",
+    title: "100% Anonymous First",
+    text: "Create an incognito identity. No real names, no social links—just your interests, vibe, and personality."
+  },
+  {
+    icon: "⚡",
+    title: "Vibe-Based Matching",
+    text: "Our algorithm pairs you with matches based on hobbies, core values, and communication styles."
+  },
+  {
+    icon: "🎭",
+    title: "Progressive Reveal",
+    text: "Identity details unlock level-by-level as you message. Mutual trust decides when to unmask photos."
+  },
+  {
+    icon: "🛡️",
+    title: "Zero Pressure & Safe",
+    text: "End chats or unmatch anytime with total privacy protection. Your true data is always encrypted."
+  }
+];
+
+const steps = [
+  {
+    step: "01",
+    title: "Pick Your Mask",
+    description: "Choose a mystery avatar, nickname, and your top interest tags."
+  },
+  {
+    step: "02",
+    title: "Swipe & Vibe",
+    description: "Discover local profiles purely based on bio, interests, and compatibility scores."
+  },
+  {
+    step: "03",
+    title: "Chat & Level Up",
+    description: "Every message sent increases your Reveal Meter. Reach 100% to swap photos!"
+  }
+];
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="AnonHearts — Anonymous Dating & Authentic Connections">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 space-y-24">
+
+    <!-- HERO SECTION -->
+    <section class="relative text-center space-y-8 pt-4 pb-12">
+      <!-- Glow effect -->
+      <div class="absolute left-1/2 top-1/2 -z-10 h-[350px] w-[350px] sm:h-[500px] sm:w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-tr from-pink-600/30 to-purple-600/20 blur-[130px]"></div>
+
+      <!-- Live pill indicator -->
+      <div class="inline-flex items-center gap-2.5 rounded-full border border-pink-500/30 bg-pink-500/10 px-4 py-2 text-xs font-semibold text-pink-300 backdrop-blur-md">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
+        </span>
+        <span>14,280 anonymous singles active right now</span>
+      </div>
+
+      <!-- Headline -->
+      <h1 class="mx-auto max-w-4xl text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight text-white">
+        Fall in love with the <span class="bg-gradient-to-r from-pink-500 via-rose-400 to-purple-400 bg-clip-text text-transparent">person</span>, not just the picture.
+      </h1>
+
+      <p class="mx-auto max-w-2xl text-base sm:text-xl text-zinc-400 leading-relaxed">
+        AnonHearts is the privacy-first dating platform. Connect authentically based on shared passions, witty banter, and real soul—then reveal your true identity when you both ready.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+        <a
+          href="/signup"
+          class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold text-lg shadow-xl shadow-pink-600/25 transition duration-200 hover:scale-[1.03] active:scale-[0.98] flex items-center justify-center gap-3"
+        >
+          <span>Start Anonymous Matching</span>
+          <span class="text-xl">❤️</span>
+        </a>
+
+        <a
+          href="/discover"
+          class="w-full sm:w-auto px-8 py-4 rounded-full border border-zinc-700/80 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-200 font-semibold text-lg transition duration-200 hover:border-zinc-500 flex items-center justify-center gap-2"
+        >
+          <span>Explore Live Profiles</span>
+          <span>✨</span>
+        </a>
+      </div>
+
+      <!-- Social Trust Indicators -->
+      <div class="pt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-12 text-zinc-500 text-xs sm:text-sm font-medium">
+        <div class="flex items-center gap-2">
+          <span class="text-pink-500 font-bold text-base">✓</span> 100% Encrypted & Anonymous
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-pink-500 font-bold text-base">✓</span> Mutual Reveal Consent
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-pink-500 font-bold text-base">✓</span> No Social Media Tracking
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="space-y-12">
+      <div class="text-center space-y-4">
+        <h2 class="text-xs uppercase tracking-widest font-semibold text-pink-500">Simple 3-Step Vibe Check</h2>
+        <h3 class="text-3xl sm:text-4xl font-bold text-white tracking-tight">How AnonHearts Magic Works</h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {steps.map((s) => (
+          <div class="relative group rounded-3xl border border-zinc-800/80 bg-zinc-900/50 p-8 backdrop-blur-sm transition duration-300 hover:-translate-y-1.5 hover:border-pink-500/40 hover:bg-zinc-900/80 hover:shadow-xl hover:shadow-pink-500/5">
+            <div class="text-4xl font-extrabold text-pink-500/30 group-hover:text-pink-500 transition duration-300">
+              {s.step}
+            </div>
+            <h4 class="mt-4 text-xl font-bold text-white">{s.title}</h4>
+            <p class="mt-2 text-zinc-400 text-sm leading-relaxed">{s.description}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- FEATURES GRID -->
+    <section class="space-y-12">
+      <div class="text-center space-y-4">
+        <h2 class="text-xs uppercase tracking-widest font-semibold text-pink-500">Built For Genuine Dating</h2>
+        <h3 class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Why Choose Anonymous Dating?</h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {features.map((item) => (
+          <div class="rounded-3xl border border-zinc-800/80 bg-zinc-950/60 p-6 backdrop-blur-md hover:border-zinc-700 transition duration-200">
+            <div class="w-12 h-12 rounded-2xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-2xl mb-5">
+              {item.icon}
+            </div>
+            <h4 class="text-lg font-bold text-white">{item.title}</h4>
+            <p class="mt-2 text-zinc-400 text-xs sm:text-sm leading-relaxed">{item.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- REVEAL DEMO BANNER -->
+    <section>
+      <div class="relative overflow-hidden rounded-[2.5rem] border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-950 to-pink-950/40 p-8 sm:p-14 shadow-2xl">
+        <div class="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-pink-600/20 blur-[100px]"></div>
+
+        <div class="relative z-10 grid md:grid-cols-2 gap-8 items-center">
+          <div class="space-y-6">
+            <div class="inline-flex items-center gap-2 rounded-full border border-pink-500/30 bg-pink-500/10 px-3.5 py-1.5 text-xs font-semibold text-pink-400">
+              🎭 Identity Unlocking System
+            </div>
+            <h3 class="text-3xl sm:text-4xl font-bold text-white leading-tight">
+              Watch your match unmask in real-time as you chat.
+            </h3>
+            <p class="text-zinc-400 text-sm sm:text-base leading-relaxed">
+              Every message you exchange fills the mutual Reveal Meter. From bio clues, voice notes, interest teasers to full photo unveils—you control your exposure every step of the way.
+            </p>
+            <div class="pt-2">
+              <a
+                href="/discover"
+                class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white text-black font-semibold text-sm hover:bg-zinc-200 transition"
+              >
+                Try The Match Simulator →
+              </a>
+            </div>
+          </div>
+
+          <!-- Interactive Meter Mockup -->
+          <div class="rounded-2xl border border-zinc-800 bg-black/60 p-6 backdrop-blur-md space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-lg">
+                  🦊
+                </div>
+                <div>
+                  <div class="font-bold text-sm text-white">StarlightStargazer</div>
+                  <div class="text-xs text-pink-400">Level 3 Reveal • 75% Unlocked</div>
+                </div>
+              </div>
+              <span class="text-xs bg-pink-500/20 text-pink-300 px-3 py-1 rounded-full font-medium">Mutual Match</span>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="space-y-1.5">
+              <div class="w-full bg-zinc-800 h-2.5 rounded-full overflow-hidden">
+                <div class="bg-gradient-to-r from-pink-500 to-rose-400 h-full w-[75%] rounded-full animate-pulse"></div>
+              </div>
+              <div class="flex justify-between text-[11px] text-zinc-500">
+                <span>0% Masked</span>
+                <span>50% Clues</span>
+                <span class="text-pink-400 font-semibold">100% Unmasked</span>
+              </div>
+            </div>
+
+            <div class="rounded-xl bg-zinc-900/80 p-3 text-xs text-zinc-300 border border-zinc-800/60 italic">
+              "I love late-night indie music listening sessions too! What's your favorite track right now?"
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
 </Layout>

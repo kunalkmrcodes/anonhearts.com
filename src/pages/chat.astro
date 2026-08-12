@@ -1,0 +1,334 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const icebreakers = [
+  "What's a secret habit or hobby you rarely tell anyone about? 🤫",
+  "If you could teleport to any city right now for dinner, where would we go? ✈️",
+  "What song have you had on repeat for the past week? 🎵",
+  "Are you a late-night deep talker or an early-morning coffee person? ☕"
+];
+---
+
+<Layout title="Anonymous Chat Room — AnonHearts">
+  <main class="max-w-5xl mx-auto px-2 sm:px-4 py-4 flex-1 flex flex-col h-[calc(100vh-5rem)]">
+
+    <!-- CHAT CONTAINER CARD -->
+    <div class="flex-1 rounded-3xl border border-zinc-800/80 bg-zinc-950/90 shadow-2xl flex flex-col overflow-hidden backdrop-blur-xl">
+
+      <!-- CHAT HEADER -->
+      <div class="px-4 sm:px-6 py-4 border-b border-zinc-800/80 bg-zinc-900/60 flex items-center justify-between gap-4">
+        
+        <!-- Left: Match Profile Info -->
+        <div class="flex items-center gap-3">
+          <a href="/matches" class="text-zinc-400 hover:text-white p-1 text-lg" title="Back to matches">
+            ←
+          </a>
+
+          <div class="relative">
+            <div id="chat-avatar" class="w-11 h-11 rounded-full bg-gradient-to-tr from-pink-600 to-purple-800 flex items-center justify-center text-2xl border border-pink-500/40 shadow-md">
+              🦊
+            </div>
+            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-zinc-950"></span>
+          </div>
+
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 id="chat-nickname" class="font-extrabold text-base text-white">VelvetEcho</h2>
+              <span class="text-[10px] bg-pink-500/20 text-pink-300 px-2 py-0.5 rounded-full font-semibold border border-pink-500/30">
+                Anonymous Match
+              </span>
+            </div>
+            <p id="chat-status" class="text-xs text-zinc-400">Online • Active now</p>
+          </div>
+        </div>
+
+        <!-- Right: Reveal Progress Bar & Action -->
+        <div class="flex items-center gap-4">
+          <div class="hidden sm:flex flex-col items-end w-36 space-y-1">
+            <div class="flex items-center gap-1.5 text-xs font-semibold text-zinc-300">
+              <span>Identity Gauge</span>
+              <span id="reveal-percent" class="text-pink-400 font-bold">25%</span>
+            </div>
+            <div class="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
+              <div id="reveal-bar-inner" class="bg-gradient-to-r from-pink-500 to-rose-400 h-full rounded-full transition-all duration-500" style="width: 25%;"></div>
+            </div>
+          </div>
+
+          <button
+            id="reveal-request-btn"
+            type="button"
+            class="px-3.5 py-2 rounded-full border border-pink-500/40 bg-pink-500/10 hover:bg-pink-500/20 text-pink-300 text-xs font-bold transition flex items-center gap-1.5"
+          >
+            <span>🔓</span>
+            <span class="hidden sm:inline">Request Photo Unmask</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ICEBREAKER BANNER BAR -->
+      <div class="px-4 py-2 bg-pink-950/30 border-b border-pink-500/20 flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
+        <span class="text-xs font-semibold text-pink-400 shrink-0 flex items-center gap-1">
+          <span>⚡ Spark Icebreaker:</span>
+        </span>
+        <div class="flex items-center gap-2 shrink-0">
+          {icebreakers.map((ib) => (
+            <button
+              type="button"
+              class="icebreaker-btn text-[11px] px-3 py-1 rounded-full bg-zinc-900/90 border border-zinc-700/80 text-zinc-300 hover:border-pink-500/60 hover:text-pink-300 transition whitespace-nowrap"
+              data-text={ib}
+            >
+              {ib}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <!-- MESSAGES FEED AREA -->
+      <div id="chat-feed" class="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 font-sans text-sm">
+        
+        <!-- System Welcome Note -->
+        <div class="text-center py-2">
+          <span class="inline-block px-4 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-800 text-xs text-zinc-400">
+            🔒 End-to-end encrypted anonymous session. Reveal gauge advances with every message.
+          </span>
+        </div>
+
+        <!-- Initial Incoming Message -->
+        <div class="flex items-end gap-2.5 max-w-[85%] sm:max-w-[70%]">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-600 to-purple-800 flex items-center justify-center text-sm shrink-0">
+            🦊
+          </div>
+          <div class="space-y-1">
+            <div class="bg-zinc-900 border border-zinc-800 p-3.5 rounded-2xl rounded-bl-sm text-zinc-200 shadow-md">
+              Hey there! 👋 Saw you love late-night music and gaming too. What song have you had on repeat today?
+            </div>
+            <div class="text-[10px] text-zinc-500 px-1">10:42 PM</div>
+          </div>
+        </div>
+
+        <!-- Outgoing Message -->
+        <div class="flex items-end justify-end gap-2.5 max-w-[85%] sm:max-w-[70%] ml-auto">
+          <div class="space-y-1 text-right">
+            <div class="bg-gradient-to-r from-pink-600 to-rose-600 text-white p-3.5 rounded-2xl rounded-br-sm shadow-md shadow-pink-600/10">
+              Hey! I've been listening to Midnight City on loop all afternoon 🎶 How about you?
+            </div>
+            <div class="text-[10px] text-zinc-500 px-1">10:44 PM • Sent</div>
+          </div>
+        </div>
+
+        <!-- Incoming Message -->
+        <div class="flex items-end gap-2.5 max-w-[85%] sm:max-w-[70%]">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-600 to-purple-800 flex items-center justify-center text-sm shrink-0">
+            🦊
+          </div>
+          <div class="space-y-1">
+            <div class="bg-zinc-900 border border-zinc-800 p-3.5 rounded-2xl rounded-bl-sm text-zinc-200 shadow-md">
+              Classic choice! That synth intro is unbeatable 🔥
+            </div>
+            <div class="text-[10px] text-zinc-500 px-1">10:45 PM</div>
+          </div>
+        </div>
+
+        <!-- Typing Indicator (hidden by default) -->
+        <div id="typing-indicator" class="hidden flex items-center gap-2 text-xs text-zinc-400 pl-10">
+          <span class="animate-bounce font-bold text-pink-400">•</span>
+          <span class="animate-bounce delay-100 font-bold text-pink-400">•</span>
+          <span class="animate-bounce delay-200 font-bold text-pink-400">•</span>
+          <span class="italic">VelvetEcho is typing...</span>
+        </div>
+
+      </div>
+
+      <!-- CHAT INPUT FORM -->
+      <div class="p-3 sm:p-4 border-t border-zinc-800/80 bg-zinc-900/40">
+        <form id="chat-form" class="flex items-center gap-2">
+          
+          <button
+            type="button"
+            class="p-3 rounded-2xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition"
+            title="Attach anonymous vibe clip"
+          >
+            🎙️
+          </button>
+
+          <input
+            id="message-input"
+            type="text"
+            placeholder="Type your anonymous message..."
+            autocomplete="off"
+            required
+            class="flex-1 rounded-2xl border border-zinc-700/80 bg-black/60 px-4 py-3 text-white placeholder-zinc-500 outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition text-sm"
+          />
+
+          <button
+            type="submit"
+            class="px-5 py-3 rounded-2xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold text-sm shadow-lg shadow-pink-600/20 transition hover:scale-105 active:scale-95 flex items-center gap-1.5"
+          >
+            <span>Send</span>
+            <span>🚀</span>
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+    <!-- REVEAL PHOTO CONFIRMATION MODAL -->
+    <div id="reveal-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl">
+      <div class="w-full max-w-md rounded-3xl border border-pink-500/40 bg-zinc-950 p-8 text-center space-y-6 shadow-2xl">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-pink-500/20 border border-pink-500/40 text-3xl">
+          🔓
+        </div>
+        <div class="space-y-2">
+          <h3 class="text-2xl font-bold text-white">Mutual Unmask Request</h3>
+          <p class="text-xs text-zinc-400">
+            You are sending a request to <span class="text-pink-400 font-bold">VelvetEcho</span> to mutually reveal real profile photos. Both users must accept!
+          </p>
+        </div>
+
+        <div class="space-y-3 pt-2">
+          <button
+            id="confirm-reveal-btn"
+            type="button"
+            class="w-full py-3.5 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 text-white font-bold text-sm shadow-lg shadow-pink-500/30"
+          >
+            Send Unmask Request ❤️
+          </button>
+          <button
+            id="cancel-reveal-btn"
+            type="button"
+            class="w-full py-2.5 text-xs text-zinc-500 hover:text-zinc-300"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const matchId = urlParams.get("matchId");
+
+    // Dynamic match updates
+    const savedMatches = JSON.parse(localStorage.getItem("anonhearts_matches") || "[]");
+    const activeMatch = savedMatches.find((m: any) => m.id === matchId) || {
+      nickname: "VelvetEcho",
+      avatar: "🦊",
+      revealLevel: 35
+    };
+
+    const chatNickname = document.getElementById("chat-nickname");
+    const chatAvatar = document.getElementById("chat-avatar");
+    const revealPercent = document.getElementById("reveal-percent");
+    const revealBarInner = document.getElementById("reveal-bar-inner");
+
+    if (chatNickname) chatNickname.textContent = activeMatch.nickname;
+    if (chatAvatar) chatAvatar.textContent = activeMatch.avatar;
+    let currentReveal = activeMatch.revealLevel || 35;
+
+    function updateGauge(val: number) {
+      currentReveal = Math.min(100, val);
+      if (revealPercent) revealPercent.textContent = `${currentReveal}%`;
+      if (revealBarInner) revealBarInner.style.width = `${currentReveal}%`;
+    }
+    updateGauge(currentReveal);
+
+    // Chat messaging logic
+    const chatForm = document.getElementById("chat-form") as HTMLFormElement;
+    const messageInput = document.getElementById("message-input") as HTMLInputElement;
+    const chatFeed = document.getElementById("chat-feed");
+    const typingIndicator = document.getElementById("typing-indicator");
+
+    const matchReplies = [
+      "That's so interesting! I completely agree 😊",
+      "Haha no way! I was thinking the exact same thing.",
+      "Tell me more about that... what made you realize it?",
+      "I love how open we can be here without any pre-judgments 💖",
+      "Our reveal meter is rising fast! Almost at the next clue tier!"
+    ];
+
+    chatForm?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const text = messageInput.value.trim();
+      if (!text || !chatFeed) return;
+
+      // Append Outgoing Message
+      const userBubble = document.createElement("div");
+      userBubble.className = "flex items-end justify-end gap-2.5 max-w-[85%] sm:max-w-[70%] ml-auto animate-fade-in";
+      userBubble.innerHTML = `
+        <div class="space-y-1 text-right">
+          <div class="bg-gradient-to-r from-pink-600 to-rose-600 text-white p-3.5 rounded-2xl rounded-br-sm shadow-md">
+            ${escapeHtml(text)}
+          </div>
+          <div class="text-[10px] text-zinc-500 px-1">Just now • Sent</div>
+        </div>
+      `;
+      chatFeed.appendChild(userBubble);
+      messageInput.value = "";
+      chatFeed.scrollTop = chatFeed.scrollHeight;
+
+      // Increase Reveal Gauge by 5% per message
+      updateGauge(currentReveal + 5);
+
+      // Simulate Match Reply after 1.5s
+      setTimeout(() => {
+        typingIndicator?.classList.remove("hidden");
+        chatFeed.scrollTop = chatFeed.scrollHeight;
+      }, 600);
+
+      setTimeout(() => {
+        typingIndicator?.classList.add("hidden");
+        const replyText = matchReplies[Math.floor(Math.random() * matchReplies.length)];
+        
+        const matchBubble = document.createElement("div");
+        matchBubble.className = "flex items-end gap-2.5 max-w-[85%] sm:max-w-[70%] animate-fade-in";
+        matchBubble.innerHTML = `
+          <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-600 to-purple-800 flex items-center justify-center text-sm shrink-0">
+            ${activeMatch.avatar}
+          </div>
+          <div class="space-y-1">
+            <div class="bg-zinc-900 border border-zinc-800 p-3.5 rounded-2xl rounded-bl-sm text-zinc-200 shadow-md">
+              ${replyText}
+            </div>
+            <div class="text-[10px] text-zinc-500 px-1">Just now</div>
+          </div>
+        `;
+        chatFeed.appendChild(matchBubble);
+        chatFeed.scrollTop = chatFeed.scrollHeight;
+        updateGauge(currentReveal + 5);
+      }, 2200);
+    });
+
+    // Icebreaker button clicks
+    document.querySelectorAll(".icebreaker-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const text = (btn as HTMLElement).dataset.text;
+        if (text && messageInput) {
+          messageInput.value = text;
+          messageInput.focus();
+        }
+      });
+    });
+
+    // Reveal modal handlers
+    const revealReqBtn = document.getElementById("reveal-request-btn");
+    const revealModal = document.getElementById("reveal-modal");
+    const confirmRevealBtn = document.getElementById("confirm-reveal-btn");
+    const cancelRevealBtn = document.getElementById("cancel-reveal-btn");
+
+    revealReqBtn?.addEventListener("click", () => revealModal?.classList.remove("hidden"));
+    cancelRevealBtn?.addEventListener("click", () => revealModal?.classList.add("hidden"));
+
+    confirmRevealBtn?.addEventListener("click", () => {
+      alert("Unmask Request sent! Once VelvetEcho accepts, your photos will unlock!");
+      revealModal?.classList.add("hidden");
+      updateGauge(100);
+    });
+
+    function escapeHtml(str: string) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+  </script>
+</Layout>

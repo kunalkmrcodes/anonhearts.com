@@ -1,0 +1,196 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const defaultMatches = [
+  {
+    id: "p1",
+    nickname: "VelvetEcho",
+    avatar: "🦊",
+    avatarBg: "from-pink-600 to-purple-800",
+    revealLevel: 25,
+    statusLevel: "Level 1 • Vibe Match",
+    lastMessage: "I love late-night synthwave tracks too! What's your favorite?",
+    timestamp: "10m ago",
+    unread: true
+  },
+  {
+    id: "p2",
+    nickname: "NeonDreamer",
+    avatar: "🦉",
+    avatarBg: "from-indigo-600 to-rose-700",
+    revealLevel: 55,
+    statusLevel: "Level 2 • Clues Unlocked",
+    lastMessage: "Have you read Dune yet? The plot twist in chapter 4 is insane.",
+    timestamp: "1h ago",
+    unread: false
+  },
+  {
+    id: "p4",
+    nickname: "CosmicWhisper",
+    avatar: "🐉",
+    avatarBg: "from-amber-600 to-pink-700",
+    revealLevel: 80,
+    statusLevel: "Level 3 • Almost Unmasked",
+    lastMessage: "I'll send over my favorite stargazing spot tomorrow!",
+    timestamp: "Yesterday",
+    unread: false
+  }
+];
+---
+
+<Layout title="Your Matches & Anonymous Chats — AnonHearts">
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1">
+
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
+          <span>Anonymous Matches</span>
+          <span class="text-xs bg-pink-500/20 text-pink-300 border border-pink-500/30 px-3 py-1 rounded-full font-semibold">
+            3 Active Connections
+          </span>
+        </h1>
+        <p class="text-xs sm:text-sm text-zinc-400">Keep exchanging messages to unlock reveal milestones!</p>
+      </div>
+
+      <a
+        href="/discover"
+        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-pink-500/20 hover:scale-105 transition"
+      >
+        <span>Discover More</span>
+        <span>❤️</span>
+      </a>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="mb-6 relative">
+      <input
+        id="match-search"
+        type="text"
+        placeholder="Search matches by nickname or interests..."
+        class="w-full rounded-2xl border border-zinc-800 bg-zinc-950 px-4 py-3 pl-11 text-sm text-white placeholder-zinc-500 outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition"
+      />
+      <span class="absolute left-4 top-3.5 text-zinc-500 text-base">🔍</span>
+    </div>
+
+    <!-- MATCHES GRID -->
+    <div id="matches-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {defaultMatches.map((m) => (
+        <a
+          href={`/chat?matchId=${m.id}`}
+          class="match-card group relative rounded-3xl border border-zinc-800/80 bg-zinc-950 p-5 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-pink-500/40 hover:bg-zinc-900/80 hover:shadow-xl hover:shadow-pink-500/5 flex flex-col justify-between"
+          data-nickname={m.nickname}
+        >
+          {m.unread && (
+            <span class="absolute top-4 right-4 flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-pink-500"></span>
+            </span>
+          )}
+
+          <div class="space-y-4">
+            <!-- Header avatar & info -->
+            <div class="flex items-center gap-4">
+              <div class={`w-14 h-14 rounded-2xl bg-gradient-to-tr ${m.avatarBg} flex items-center justify-center text-3xl shadow-md border border-white/10 group-hover:scale-105 transition duration-200`}>
+                {m.avatar}
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="font-extrabold text-base text-white truncate group-hover:text-pink-400 transition">
+                  {m.nickname}
+                </h3>
+                <p class="text-xs text-pink-400/90 font-medium truncate">{m.statusLevel}</p>
+              </div>
+            </div>
+
+            <!-- Identity Reveal Progress Gauge -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-[11px] font-semibold text-zinc-400">
+                <span>Reveal Gauge</span>
+                <span class="text-pink-300">{m.revealLevel}%</span>
+              </div>
+              <div class="w-full bg-zinc-800/80 h-2 rounded-full overflow-hidden">
+                <div class="bg-gradient-to-r from-pink-500 to-rose-400 h-full rounded-full" style={`width: ${m.revealLevel}%;`}></div>
+              </div>
+            </div>
+
+            <!-- Last message snippet -->
+            <p class="text-xs text-zinc-300 italic bg-zinc-900/80 p-3 rounded-xl border border-zinc-800/60 line-clamp-2">
+              "{m.lastMessage}"
+            </p>
+          </div>
+
+          <!-- Bottom bar -->
+          <div class="pt-4 mt-2 border-t border-zinc-800/60 flex items-center justify-between text-[11px] text-zinc-500">
+            <span>Active {m.timestamp}</span>
+            <span class="font-semibold text-pink-400 group-hover:translate-x-1 transition">Chat Now →</span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+  </main>
+
+  <script>
+    // Merge dynamically saved matches from localStorage
+    const saved = JSON.parse(localStorage.getItem("anonhearts_matches") || "[]");
+    if (saved.length > 0) {
+      const grid = document.getElementById("matches-grid");
+      if (grid) {
+        saved.forEach((m: any) => {
+          // Check if already rendered
+          const existing = grid.querySelector(`[data-nickname="${m.nickname}"]`);
+          if (!existing) {
+            const a = document.createElement("a");
+            a.href = `/chat?matchId=${m.id}`;
+            a.className = "match-card group relative rounded-3xl border border-pink-500/30 bg-zinc-950 p-5 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-pink-500/50 hover:bg-zinc-900/80 flex flex-col justify-between";
+            a.setAttribute("data-nickname", m.nickname);
+            a.innerHTML = `
+              <div class="space-y-4">
+                <div class="flex items-center gap-4">
+                  <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-pink-600 to-rose-600 flex items-center justify-center text-3xl shadow-md border border-white/10">
+                    ${m.avatar}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="font-extrabold text-base text-white truncate">${m.nickname}</h3>
+                    <p class="text-xs text-pink-400 font-medium">New Mutual Match 🎉</p>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-[11px] font-semibold text-zinc-400">
+                    <span>Reveal Gauge</span>
+                    <span class="text-pink-300">${m.revealLevel}%</span>
+                  </div>
+                  <div class="w-full bg-zinc-800/80 h-2 rounded-full overflow-hidden">
+                    <div class="bg-gradient-to-r from-pink-500 to-rose-400 h-full rounded-full" style="width: ${m.revealLevel}%;"></div>
+                  </div>
+                </div>
+                <p class="text-xs text-zinc-300 italic bg-zinc-900/80 p-3 rounded-xl border border-zinc-800/60">
+                  "${m.lastMessage}"
+                </p>
+              </div>
+              <div class="pt-4 mt-2 border-t border-zinc-800/60 flex items-center justify-between text-[11px] text-zinc-500">
+                <span>Active ${m.timestamp}</span>
+                <span class="font-semibold text-pink-400">Chat Now →</span>
+              </div>
+            `;
+            grid.prepend(a);
+          }
+        });
+      }
+    }
+
+    // Filter search logic
+    const searchInput = document.getElementById("match-search") as HTMLInputElement;
+    searchInput?.addEventListener("input", (e) => {
+      const q = (e.target as HTMLInputElement).value.toLowerCase();
+      document.querySelectorAll(".match-card").forEach((card) => {
+        const nickname = card.getAttribute("data-nickname")?.toLowerCase() || "";
+        if (nickname.includes(q)) {
+          (card as HTMLElement).style.display = "flex";
+        } else {
+          (card as HTMLElement).style.display = "none";
+        }
+      });
+    });
+  </script>
+</Layout>

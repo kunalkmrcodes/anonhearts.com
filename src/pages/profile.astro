@@ -1,0 +1,264 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const interests = [
+  { name: "Gaming", icon: "🎮" },
+  { name: "Music", icon: "🎵" },
+  { name: "Books", icon: "📚" },
+  { name: "Fitness", icon: "🏋️" },
+  { name: "Movies", icon: "🎬" },
+  { name: "Cooking", icon: "🍳" },
+  { name: "Art", icon: "🎨" },
+  { name: "Travel", icon: "✈️" },
+  { name: "Photography", icon: "📸" },
+  { name: "Stargazing", icon: "🌌" },
+  { name: "Coffee & Tea", icon: "☕" },
+  { name: "Coding", icon: "💻" }
+];
+
+const avatars = [
+  { id: "fox", emoji: "🦊", label: "Midnight Fox" },
+  { id: "cat", emoji: "🐱", label: "Cosmic Cat" },
+  { id: "owl", emoji: "🦉", label: "Wisdom Owl" },
+  { id: "panda", emoji: "🐼", label: "Zen Panda" },
+  { id: "tiger", emoji: "🐯", label: "Mystic Tiger" },
+  { id: "dragon", emoji: "🐉", label: "Neon Dragon" },
+];
+---
+
+<Layout title="Setup Your Anonymous Profile — AnonHearts">
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+
+    <div class="text-center space-y-3 mb-10">
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">
+        Craft Your Anonymous Mask
+      </h1>
+      <p class="text-zinc-400 text-sm sm:text-base max-w-xl mx-auto">
+        Your real identity stays safe. Customize how other anonymous singles discover your vibe!
+      </p>
+    </div>
+
+    <!-- Profile Form Card -->
+    <form
+      id="profile-form"
+      class="rounded-3xl border border-zinc-800/80 bg-zinc-950/80 p-6 sm:p-10 backdrop-blur-xl shadow-2xl space-y-10"
+    >
+
+      <!-- Avatar Selector -->
+      <div class="space-y-4">
+        <label class="block text-sm font-semibold text-zinc-200">
+          Choose Your Mystery Mask Avatar
+        </label>
+        <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+          {avatars.map((a, idx) => (
+            <button
+              type="button"
+              class={`avatar-btn flex flex-col items-center justify-center p-4 rounded-2xl border transition duration-200 ${
+                idx === 0
+                  ? "border-pink-500 bg-pink-500/10 text-pink-400"
+                  : "border-zinc-800 bg-zinc-900/60 hover:border-zinc-700 text-zinc-300"
+              }`}
+              data-avatar={a.emoji}
+            >
+              <span class="text-4xl">{a.emoji}</span>
+              <span class="text-[11px] mt-2 font-medium">{a.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <!-- Fields Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+        <!-- Display Nickname -->
+        <div class="space-y-2">
+          <label for="displayName" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+            Anonymous Nickname *
+          </label>
+          <input
+            id="displayName"
+            name="displayName"
+            type="text"
+            placeholder="e.g. StarlightSeeker"
+            required
+            maxlength="25"
+            class="w-full rounded-2xl border border-zinc-700/80 bg-black/60 px-4 py-3.5 text-white placeholder-zinc-500 outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition text-sm"
+          />
+        </div>
+
+        <!-- Age -->
+        <div class="space-y-2">
+          <label for="age" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+            Age *
+          </label>
+          <input
+            id="age"
+            name="age"
+            type="number"
+            min="18"
+            max="99"
+            placeholder="24"
+            required
+            class="w-full rounded-2xl border border-zinc-700/80 bg-black/60 px-4 py-3.5 text-white placeholder-zinc-500 outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition text-sm"
+          />
+        </div>
+
+        <!-- Gender -->
+        <div class="space-y-2">
+          <label for="gender" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+            Gender Identity
+          </label>
+          <select
+            id="gender"
+            name="gender"
+            class="w-full rounded-2xl border border-zinc-700/80 bg-black/60 px-4 py-3.5 text-white outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition text-sm"
+          >
+            <option value="woman">Woman</option>
+            <option value="man">Man</option>
+            <option value="non-binary">Non-binary</option>
+            <option value="fluid">Gender Fluid</option>
+          </select>
+        </div>
+
+        <!-- Looking for -->
+        <div class="space-y-2">
+          <label for="lookingFor" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+            Looking For
+          </label>
+          <select
+            id="lookingFor"
+            name="lookingFor"
+            class="w-full rounded-2xl border border-zinc-700/80 bg-black/60 px-4 py-3.5 text-white outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition text-sm"
+          >
+            <option value="relationship">A Deep Relationship ❤️</option>
+            <option value="dating">Casual Dating 🥂</option>
+            <option value="friendship">Genuine Friendship 🤝</option>
+            <option value="chat">Late Night Conversations 🌙</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Interests Picker -->
+      <div class="space-y-3">
+        <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+          Select Your Passions & Hobbies (Pick 3+)
+        </label>
+        <div class="flex flex-wrap gap-2.5">
+          {interests.map((interest) => (
+            <button
+              type="button"
+              class="interest-tag flex items-center gap-2 px-4 py-2.5 rounded-full border border-zinc-800 bg-zinc-900/80 text-zinc-300 text-xs font-semibold transition hover:border-pink-500/50 hover:bg-zinc-800"
+              data-name={interest.name}
+              data-icon={interest.icon}
+            >
+              <span>{interest.icon}</span>
+              <span>{interest.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <!-- About / Vibe Bio -->
+      <div class="space-y-2">
+        <label for="bio" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">
+          Anonymous Bio & Vibe Teaser
+        </label>
+        <textarea
+          id="bio"
+          name="bio"
+          rows="4"
+          placeholder="Share your favorite late-night thoughts, music taste, ideal weekend, or what makes you smile..."
+          class="w-full rounded-2xl border border-zinc-700/80 bg-black/60 p-4 text-white placeholder-zinc-500 outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition text-sm resize-none"
+        ></textarea>
+      </div>
+
+      <!-- Submit button -->
+      <div class="pt-4">
+        <button
+          type="submit"
+          class="w-full py-4 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold text-base shadow-xl shadow-pink-600/25 transition hover:scale-[1.01] active:scale-[0.99]"
+        >
+          Save Profile & Start Discovering ❤️
+        </button>
+      </div>
+
+    </form>
+  </main>
+
+  <script>
+    import { supabase } from "../lib/supabase";
+
+    let selectedAvatar = "🦊";
+    const selectedInterests = new Set<string>(["Gaming", "Music", "Stargazing"]);
+
+    // Avatar handlers
+    const avatarBtns = document.querySelectorAll(".avatar-btn");
+    avatarBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        avatarBtns.forEach((b) => {
+          b.classList.remove("border-pink-500", "bg-pink-500/10", "text-pink-400");
+          b.classList.add("border-zinc-800", "bg-zinc-900/60", "text-zinc-300");
+        });
+        btn.classList.remove("border-zinc-800", "bg-zinc-900/60", "text-zinc-300");
+        btn.classList.add("border-pink-500", "bg-pink-500/10", "text-pink-400");
+        selectedAvatar = (btn as HTMLElement).dataset.avatar || "🦊";
+      });
+    });
+
+    // Interest tag handlers
+    const interestTags = document.querySelectorAll(".interest-tag");
+    interestTags.forEach((tag) => {
+      const name = (tag as HTMLElement).dataset.name;
+      if (name && selectedInterests.has(name)) {
+        tag.classList.add("border-pink-500", "bg-pink-500/20", "text-pink-300");
+      }
+
+      tag.addEventListener("click", () => {
+        if (!name) return;
+        if (selectedInterests.has(name)) {
+          selectedInterests.delete(name);
+          tag.classList.remove("border-pink-500", "bg-pink-500/20", "text-pink-300");
+        } else {
+          selectedInterests.add(name);
+          tag.classList.add("border-pink-500", "bg-pink-500/20", "text-pink-300");
+        }
+      });
+    });
+
+    // Form submit
+    const form = document.getElementById("profile-form") as HTMLFormElement;
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nickname = (document.getElementById("displayName") as HTMLInputElement).value || "MysteryHeart";
+      const age = (document.getElementById("age") as HTMLInputElement).value || "22";
+      const gender = (document.getElementById("gender") as HTMLSelectElement).value;
+      const lookingFor = (document.getElementById("lookingFor") as HTMLSelectElement).value;
+      const bio = (document.getElementById("bio") as HTMLTextAreaElement).value || "Lover of late night conversations and music.";
+
+      const profileData = {
+        nickname,
+        avatar: selectedAvatar,
+        age: Number(age),
+        gender,
+        lookingFor,
+        interests: Array.from(selectedInterests),
+        bio
+      };
+
+      localStorage.setItem("anonhearts_profile", JSON.stringify(profileData));
+
+      // Attempt Supabase metadata update
+      try {
+        await supabase.auth.updateUser({
+          data: profileData
+        });
+      } catch (err) {
+        console.warn("Saved profile to local storage:", err);
+      }
+
+      window.location.href = "/discover";
+    });
+  </script>
+</Layout>
