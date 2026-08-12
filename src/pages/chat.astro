@@ -115,7 +115,7 @@ const icebreakers = [
           </div>
           <div class="space-y-1 min-w-0">
             <div class="bg-zinc-900 border border-zinc-800 p-3 sm:p-3.5 rounded-2xl rounded-bl-sm text-zinc-200 shadow-md break-words">
-              Hey there! 👋 Challenge me in the Basketball Shootout! Click 🏀 Shootout to beat Level 1 to 5!
+              Hey there! 👋 Challenge me in the Basketball Shootout! Beat Level 1 to unlock Level 2 and advance! 🏀
             </div>
             <div class="text-[9px] sm:text-[10px] text-zinc-500 px-1">10:42 PM</div>
           </div>
@@ -125,7 +125,7 @@ const icebreakers = [
         <div class="flex items-end justify-end gap-2 max-w-[85%] sm:max-w-[75%] ml-auto">
           <div class="space-y-1 text-right min-w-0">
             <div class="bg-gradient-to-r from-pink-600 to-rose-600 text-white p-3 sm:p-3.5 rounded-2xl rounded-br-sm shadow-md shadow-pink-600/10 break-words">
-              Challenge accepted! Let's see who reaches Level 5 Legend status 🏀
+              Challenge accepted! Starting Level 1 now 🏀
             </div>
             <div class="text-[9px] sm:text-[10px] text-zinc-500 px-1">10:44 PM • Sent</div>
           </div>
@@ -223,22 +223,24 @@ const icebreakers = [
         <!-- Header Scoreboard & Level Pills -->
         <div class="space-y-1.5 pt-1">
           <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-bold">
-            🏀 Match Shootout Challenge
+            🏀 Basketball Shootout • Level Progression
           </div>
 
-          <!-- Level Selector Pills -->
+          <!-- Level Selector Pills with Lock Icons -->
           <div class="flex items-center justify-center gap-1 pt-1 flex-wrap">
             {[1, 2, 3, 4, 5].map((lvl) => (
               <button
                 type="button"
-                class={`level-pill-btn px-2.5 py-0.5 rounded-full text-[11px] font-extrabold transition cursor-pointer ${
+                id={`level-pill-${lvl}`}
+                class={`level-pill-btn px-2.5 py-0.5 rounded-full text-[11px] font-extrabold transition cursor-pointer flex items-center gap-0.5 ${
                   lvl === 1
                     ? "bg-amber-500 text-black shadow-md shadow-amber-500/30"
-                    : "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-zinc-700"
+                    : "bg-zinc-900 text-zinc-500 border border-zinc-800/80 opacity-60"
                 }`}
                 data-level={lvl}
               >
-                Lvl {lvl}
+                <span>Lvl {lvl}</span>
+                <span id={`lock-icon-${lvl}`} class="text-[10px]">{lvl > 1 ? "🔒" : ""}</span>
               </button>
             ))}
           </div>
@@ -418,8 +420,9 @@ const icebreakers = [
       }, 1800);
     });
 
-    // MOBILE-FRIENDLY LEVEL GAME ENGINE
+    // STRICT LEVEL UNLOCK GAME ENGINE
     let currentLevel = 1;
+    let unlockedLevel = Number(localStorage.getItem("anonhearts_basketball_unlocked_level")) || 1;
     let score = 0;
     let streak = 0;
     let levelBaskets = 0;
@@ -455,7 +458,30 @@ const icebreakers = [
     const hoopAssembly = document.getElementById("hoop-assembly");
     const levelPillBtns = document.querySelectorAll(".level-pill-btn");
 
+    function renderLevelPills() {
+      levelPillBtns.forEach((btn) => {
+        const l = Number((btn as HTMLElement).dataset.level);
+        const lockIcon = document.getElementById(`lock-icon-${l}`);
+
+        if (l === currentLevel) {
+          btn.className = "level-pill-btn px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-500 text-black shadow-md shadow-amber-500/30 cursor-pointer flex items-center gap-0.5";
+          if (lockIcon) lockIcon.textContent = "";
+        } else if (l <= unlockedLevel) {
+          btn.className = "level-pill-btn px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-zinc-900 text-amber-300 border border-amber-500/40 hover:bg-zinc-800 cursor-pointer flex items-center gap-0.5";
+          if (lockIcon) lockIcon.textContent = "🔓";
+        } else {
+          btn.className = "level-pill-btn px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-zinc-950 text-zinc-600 border border-zinc-800/60 cursor-not-allowed opacity-60 flex items-center gap-0.5";
+          if (lockIcon) lockIcon.textContent = "🔒";
+        }
+      });
+    }
+
     function setLevel(lvl: number) {
+      if (lvl > unlockedLevel) {
+        alert(`🔒 Level ${lvl} is locked! You must conquer Level ${lvl - 1} first!`);
+        return;
+      }
+
       currentLevel = lvl;
       levelBaskets = 0;
       const config = levelConfigs[lvl];
@@ -463,14 +489,7 @@ const icebreakers = [
       if (levelDescBanner) levelDescBanner.textContent = config.title;
       if (gameBasketsEl) gameBasketsEl.textContent = `0/${config.target}`;
 
-      levelPillBtns.forEach((btn) => {
-        const l = Number((btn as HTMLElement).dataset.level);
-        if (l === lvl) {
-          btn.className = "level-pill-btn px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-500 text-black shadow-md shadow-amber-500/30 cursor-pointer";
-        } else {
-          btn.className = "level-pill-btn px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-zinc-900 text-zinc-400 border border-zinc-800 cursor-pointer hover:border-zinc-700";
-        }
-      });
+      renderLevelPills();
 
       if (config.wind && windIndicator) {
         windIndicator.classList.remove("hidden");
@@ -529,13 +548,19 @@ const icebreakers = [
             setTimeout(() => swishAlert.classList.add("hidden"), 900);
           }
 
+          // Strict Level Completion & Advancement
           if (levelBaskets >= config.target) {
             setTimeout(() => {
               if (currentLevel < 5) {
-                alert(`🏆 LEVEL ${currentLevel} CONQUERED! Unlocking Level ${currentLevel + 1}! 🎉`);
-                setLevel(currentLevel + 1);
+                const nextLvl = currentLevel + 1;
+                if (nextLvl > unlockedLevel) {
+                  unlockedLevel = nextLvl;
+                  localStorage.setItem("anonhearts_basketball_unlocked_level", String(unlockedLevel));
+                }
+                alert(`🏆 LEVEL ${currentLevel} CONQUERED! Level ${nextLvl} Unlocked! 🎉`);
+                setLevel(nextLvl);
               } else {
-                alert("🏆 ALL 5 BASKETBALL LEVELS CONQUERED! LEGEND STATUS UNLOCKED! 🔥");
+                alert("🏆 ALL 5 BASKETBALL LEVELS CONQUERED! YOU ARE A LEGEND! 🔥");
               }
             }, 300);
           }
@@ -569,7 +594,7 @@ const icebreakers = [
       }
     }, { passive: true });
 
-    // Click handlers
+    // Click handlers for level pills
     levelPillBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
         const lvl = Number((btn as HTMLElement).dataset.level);
