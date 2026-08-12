@@ -53,7 +53,7 @@ const avatars = [
           {avatars.map((a, idx) => (
             <button
               type="button"
-              class={`avatar-btn flex flex-col items-center justify-center p-4 rounded-2xl border transition duration-200 ${
+              class={`avatar-btn flex flex-col items-center justify-center p-4 rounded-2xl border transition duration-200 cursor-pointer ${
                 idx === 0
                   ? "border-pink-500 bg-pink-500/10 text-pink-400"
                   : "border-zinc-800 bg-zinc-900/60 hover:border-zinc-700 text-zinc-300"
@@ -146,7 +146,7 @@ const avatars = [
           {interests.map((interest) => (
             <button
               type="button"
-              class="interest-tag flex items-center gap-2 px-4 py-2.5 rounded-full border border-zinc-800 bg-zinc-900/80 text-zinc-300 text-xs font-semibold transition hover:border-pink-500/50 hover:bg-zinc-800"
+              class="interest-tag flex items-center gap-2 px-4 py-2.5 rounded-full border border-zinc-800 bg-zinc-900/80 text-zinc-300 text-xs font-semibold transition cursor-pointer select-none"
               data-name={interest.name}
               data-icon={interest.icon}
             >
@@ -176,7 +176,7 @@ const avatars = [
         <button
           id="save-profile-btn"
           type="submit"
-          class="w-full flex-1 py-4 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold text-base shadow-xl shadow-pink-600/25 transition hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+          class="w-full flex-1 py-4 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold text-base shadow-xl shadow-pink-600/25 transition hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 cursor-pointer"
         >
           Save Profile & Start Discovering ❤️
         </button>
@@ -231,21 +231,33 @@ const avatars = [
     });
 
     // Interest tag handlers
+    function updateTagVisual(tag: HTMLElement, active: boolean) {
+      if (active) {
+        tag.classList.remove("border-zinc-800", "bg-zinc-900/80", "text-zinc-300");
+        tag.classList.add("border-pink-500", "bg-pink-500/20", "text-pink-300", "shadow-md", "shadow-pink-500/10");
+      } else {
+        tag.classList.remove("border-pink-500", "bg-pink-500/20", "text-pink-300", "shadow-md", "shadow-pink-500/10");
+        tag.classList.add("border-zinc-800", "bg-zinc-900/80", "text-zinc-300");
+      }
+    }
+
     const interestTags = document.querySelectorAll(".interest-tag");
-    interestTags.forEach((tag) => {
-      const name = (tag as HTMLElement).dataset.name;
+    interestTags.forEach((tagNode) => {
+      const tag = tagNode as HTMLElement;
+      const name = tag.dataset.name;
+
       if (name && selectedInterests.has(name)) {
-        tag.classList.add("border-pink-500", "bg-pink-500/20", "text-pink-300");
+        updateTagVisual(tag, true);
       }
 
       tag.addEventListener("click", () => {
         if (!name) return;
         if (selectedInterests.has(name)) {
           selectedInterests.delete(name);
-          tag.classList.remove("border-pink-500", "bg-pink-500/20", "text-pink-300");
+          updateTagVisual(tag, false);
         } else {
           selectedInterests.add(name);
-          tag.classList.add("border-pink-500", "bg-pink-500/20", "text-pink-300");
+          updateTagVisual(tag, true);
         }
       });
     });
@@ -291,7 +303,7 @@ const avatars = [
       try {
         await Promise.race([
           supabase.auth.updateUser({ data: profileData }),
-          new Promise((resolve) => setTimeout(resolve, 1200)) // 1.2s safety timeout
+          new Promise((resolve) => setTimeout(resolve, 1000))
         ]);
       } catch (err) {
         console.warn("Saved profile locally:", err);
