@@ -73,14 +73,13 @@ const avatars = [
         <!-- Display Nickname -->
         <div class="space-y-2">
           <label for="displayName" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">
-            Anonymous Nickname *
+            Anonymous Nickname
           </label>
           <input
             id="displayName"
             name="displayName"
             type="text"
             placeholder="e.g. StarlightSeeker"
-            required
             maxlength="25"
             class="w-full rounded-2xl border border-zinc-700/80 bg-black/60 px-4 py-3.5 text-white placeholder-zinc-500 outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition text-sm"
           />
@@ -89,7 +88,7 @@ const avatars = [
         <!-- Age -->
         <div class="space-y-2">
           <label for="age" class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">
-            Age *
+            Age
           </label>
           <input
             id="age"
@@ -98,7 +97,6 @@ const avatars = [
             min="18"
             max="99"
             placeholder="24"
-            required
             class="w-full rounded-2xl border border-zinc-700/80 bg-black/60 px-4 py-3.5 text-white placeholder-zinc-500 outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 transition text-sm"
           />
         </div>
@@ -142,7 +140,7 @@ const avatars = [
       <!-- Interests Picker -->
       <div class="space-y-3">
         <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider">
-          Select Your Passions & Hobbies (Pick 3+)
+          Select Your Passions & Hobbies
         </label>
         <div class="flex flex-wrap gap-2.5">
           {interests.map((interest) => (
@@ -173,14 +171,22 @@ const avatars = [
         ></textarea>
       </div>
 
-      <!-- Submit button -->
-      <div class="pt-4">
+      <!-- Submit & Skip buttons -->
+      <div class="pt-4 flex flex-col sm:flex-row items-center gap-4">
         <button
+          id="save-profile-btn"
           type="submit"
-          class="w-full py-4 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold text-base shadow-xl shadow-pink-600/25 transition hover:scale-[1.01] active:scale-[0.99]"
+          class="w-full flex-1 py-4 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold text-base shadow-xl shadow-pink-600/25 transition hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
         >
           Save Profile & Start Discovering ❤️
         </button>
+
+        <a
+          href="/discover"
+          class="w-full sm:w-auto px-6 py-4 rounded-full border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white font-semibold text-sm text-center transition"
+        >
+          Skip to Discover →
+        </a>
       </div>
 
     </form>
@@ -191,6 +197,24 @@ const avatars = [
 
     let selectedAvatar = "🦊";
     const selectedInterests = new Set<string>(["Gaming", "Music", "Stargazing"]);
+
+    // Prefill existing user data if stored in local storage
+    const savedUser = JSON.parse(localStorage.getItem("anonhearts_user") || "{}");
+    const savedProfile = JSON.parse(localStorage.getItem("anonhearts_profile") || "{}");
+
+    const displayNameInput = document.getElementById("displayName") as HTMLInputElement;
+    const ageInput = document.getElementById("age") as HTMLInputElement;
+    const bioInput = document.getElementById("bio") as HTMLTextAreaElement;
+
+    if (displayNameInput) {
+      displayNameInput.value = savedProfile.nickname || savedUser.nickname || "";
+    }
+    if (ageInput) {
+      ageInput.value = savedProfile.age || savedUser.age || 22;
+    }
+    if (bioInput && savedProfile.bio) {
+      bioInput.value = savedProfile.bio;
+    }
 
     // Avatar handlers
     const avatarBtns = document.querySelectorAll(".avatar-btn");
@@ -226,38 +250,54 @@ const avatars = [
       });
     });
 
-    // Form submit
+    // Form submit logic
     const form = document.getElementById("profile-form") as HTMLFormElement;
+    const saveBtn = document.getElementById("save-profile-btn") as HTMLButtonElement;
+
     form?.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const nickname = (document.getElementById("displayName") as HTMLInputElement).value || "MysteryHeart";
-      const age = (document.getElementById("age") as HTMLInputElement).value || "22";
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Saving Profile...";
+      }
+
+      const nickname = (document.getElementById("displayName") as HTMLInputElement).value.trim() || "MysteryHeart";
+      const ageVal = (document.getElementById("age") as HTMLInputElement).value;
+      const age = ageVal ? Number(ageVal) : 22;
       const gender = (document.getElementById("gender") as HTMLSelectElement).value;
       const lookingFor = (document.getElementById("lookingFor") as HTMLSelectElement).value;
-      const bio = (document.getElementById("bio") as HTMLTextAreaElement).value || "Lover of late night conversations and music.";
+      const bio = (document.getElementById("bio") as HTMLTextAreaElement).value.trim() || "Lover of late night conversations and music.";
 
       const profileData = {
         nickname,
         avatar: selectedAvatar,
-        age: Number(age),
+        age,
         gender,
         lookingFor,
         interests: Array.from(selectedInterests),
         bio
       };
 
+      // Always save to localStorage first for instant client responsiveness
       localStorage.setItem("anonhearts_profile", JSON.stringify(profileData));
 
-      // Attempt Supabase metadata update
+      const currentUser = JSON.parse(localStorage.getItem("anonhearts_user") || "{}");
+      currentUser.nickname = nickname;
+      currentUser.loggedIn = true;
+      localStorage.setItem("anonhearts_user", JSON.stringify(currentUser));
+
+      // Attempt non-blocking Supabase auth metadata update
       try {
-        await supabase.auth.updateUser({
-          data: profileData
-        });
+        await Promise.race([
+          supabase.auth.updateUser({ data: profileData }),
+          new Promise((resolve) => setTimeout(resolve, 1200)) // 1.2s safety timeout
+        ]);
       } catch (err) {
-        console.warn("Saved profile to local storage:", err);
+        console.warn("Saved profile locally:", err);
       }
 
+      // Smooth navigation to discover page
       window.location.href = "/discover";
     });
   </script>
